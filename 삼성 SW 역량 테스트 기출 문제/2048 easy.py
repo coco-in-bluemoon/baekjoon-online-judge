@@ -4,7 +4,6 @@ from collections import deque
 def move(start, end, row, col, delta, board):
     N = len(board)
     board_copy = [[0] * N for _ in range(N)]
-    number = max(sum(board, []))
 
     # Up and Down
     if row:
@@ -26,8 +25,6 @@ def move(start, end, row, col, delta, board):
                 else:
                     idx += delta
                     board_copy[idx][c] = b
-
-                number = max(number, board_copy[r][c])
     # Left or Right
     elif col:
         for r in range(N):
@@ -49,9 +46,7 @@ def move(start, end, row, col, delta, board):
                     idx += delta
                     board_copy[r][idx] = b
 
-                number = max(number, board_copy[r][c])
-
-    return board_copy, number
+    return board_copy, max(sum(board_copy, []))
 
 
 def solution(board):
@@ -75,6 +70,8 @@ def solution(board):
             continue
 
         board_id = ''.join([str(val) for val in sum(board, [])])
+        if board_id in visited:
+            continue
         visited.add(board_id)
         answer = max(answer, number)
 
