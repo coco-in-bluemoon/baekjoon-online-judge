@@ -14,32 +14,42 @@ def solution_overtime(n, sentence):
     return len(matched)
 
 
-def solution(n, sentence):
-    pattern = 'IO' * n + 'I'
+def calculate_prefix_table(pattern):
+    prefix_table = [0] * len(pattern)
 
-    pi = [0] * len(pattern)
-    j = 0
-    for i in range(1, len(pattern)):
+    i, j = 1, 0
+    while i < len(pattern):
         while j > 0 and pattern[i] != pattern[j]:
-            j = pi[j-1]
-
+            j = prefix_table[j-1]
         if pattern[i] == pattern[j]:
             j += 1
-            pi[i] = j
+        prefix_table[i] = j
+        i += 1
 
-    j = 0
+    return prefix_table
+
+
+def apply_kmp_algorithm(sentence, pattern, prefix_table):
+    i, j = 0, 0
     counter = 0
-    for i in range(len(sentence)):
+    while i < len(sentence):
         while j > 0 and sentence[i] != pattern[j]:
-            j = pi[j-1]
-
+            j = prefix_table[j-1]
         if sentence[i] == pattern[j]:
             if j == len(pattern) - 1:
                 counter += 1
-                j = pi[j]
+                j = prefix_table[j]
             else:
                 j += 1
+        i += 1
+    return counter
 
+
+def solution(n, sentence):
+    pattern = 'O'.join(['I'] * (n + 1))
+    prefix_table = calculate_prefix_table(pattern)
+
+    counter = apply_kmp_algorithm(sentence, pattern, prefix_table)
     return counter
 
 
